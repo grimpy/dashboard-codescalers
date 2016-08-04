@@ -1,52 +1,56 @@
 import { Component, OnInit }        from '@angular/core';
-import { HTTP_PROVIDERS }  from '@angular/http';
+import { HTTP_PROVIDERS, Http }  from '@angular/http';
 import { Observable }     from 'rxjs/Observable';
 import { DashService } from './dash.service';
 
 @Component({
   selector: 'my-dash',
-  template: `
-    <h1>TEST</h1>
-    <h3><i>Get Dashboard Data</i></h3>
-
-    <p><i>Overall status</i></p>
-    <p>{{OverallStatus}}</p>
-
-    <p><i>Summary status</i></p>
-    <p>{{StatusSummary}}</p>
-
-  `,
+  templateUrl:'app/dash/templates/page.html' ,
   providers: [DashService, HTTP_PROVIDERS]
 })
 
 export class DashComponent implements OnInit {
+  nid_no = '';
+  nid_no2 = '';
   OverallStatus: Observable<string>;
   StatusSummary: Observable<string>;
+  DetailedStatus;
+  HealthCheck;
   count = 0;
   id;
-  constructor (private dashService: DashService) {
-
+  
+  constructor (private dashService: DashService, private http:Http) {
   this.id = setInterval(() => {
       this.getOverallStatus();
       this.getStatusSummary();
     }, 10000);
-
+    
   }
 
   ngOnInit(){
     this.getOverallStatus();
-    this.getStatusSummary();
+    this.getStatusSummary();    
   }
 
   getOverallStatus() {
     this.dashService.getOverallStatus(response => this.OverallStatus = response.text());   
-    this.count += 1;
-    console.log(this.count);
   }
   getStatusSummary(){
     this.dashService.getStatusSummary(response => this.StatusSummary = response.text());    
-    this.count += 1;
-    console.log(this.count);
-    
   }
+
+  getHealthRun(){
+    this.http.request('http://127.0.0.1:5000/getHealthRun?nid_no=' + this.nid_no2)
+              .debounceTime(400)
+              .distinctUntilChanged()
+              .subscribe(response => this.HealthCheck = response.text());    
+
+  }
+  getDetailedStatus(){
+    this.http.request('http://127.0.0.1:5000/getDetailedStatus?nid_no=' + this.nid_no)
+              .debounceTime(400)
+              .distinctUntilChanged()
+              .subscribe(response => this.DetailedStatus = response.text());   
+  }
+
 }

@@ -19,9 +19,6 @@ var AppComponent = (function () {
         core_1.Component({
             selector: 'my-app',
             template: "\n    <my-dash></my-dash>\n  ",
-            /*
-              providers: [ HTTP_PROVIDERS ]
-            */
             directives: [
                 dash_component_1.DashComponent
             ]

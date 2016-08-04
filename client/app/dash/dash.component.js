@@ -12,9 +12,12 @@ var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 var dash_service_1 = require('./dash.service');
 var DashComponent = (function () {
-    function DashComponent(dashService) {
+    function DashComponent(dashService, http) {
         var _this = this;
         this.dashService = dashService;
+        this.http = http;
+        this.nid_no = '';
+        this.nid_no2 = '';
         this.count = 0;
         this.id = setInterval(function () {
             _this.getOverallStatus();
@@ -28,22 +31,32 @@ var DashComponent = (function () {
     DashComponent.prototype.getOverallStatus = function () {
         var _this = this;
         this.dashService.getOverallStatus(function (response) { return _this.OverallStatus = response.text(); });
-        this.count += 1;
-        console.log(this.count);
     };
     DashComponent.prototype.getStatusSummary = function () {
         var _this = this;
         this.dashService.getStatusSummary(function (response) { return _this.StatusSummary = response.text(); });
-        this.count += 1;
-        console.log(this.count);
+    };
+    DashComponent.prototype.getHealthRun = function () {
+        var _this = this;
+        this.http.request('http://127.0.0.1:5000/getHealthRun?nid_no=' + this.nid_no2)
+            .debounceTime(400)
+            .distinctUntilChanged()
+            .subscribe(function (response) { return _this.HealthCheck = response.text(); });
+    };
+    DashComponent.prototype.getDetailedStatus = function () {
+        var _this = this;
+        this.http.request('http://127.0.0.1:5000/getDetailedStatus?nid_no=' + this.nid_no)
+            .debounceTime(400)
+            .distinctUntilChanged()
+            .subscribe(function (response) { return _this.DetailedStatus = response.text(); });
     };
     DashComponent = __decorate([
         core_1.Component({
             selector: 'my-dash',
-            template: "\n    <h1>TEST</h1>\n    <h3><i>Get Dashboard Data</i></h3>\n\n    <p><i>Overall status</i></p>\n    <p>{{OverallStatus}}</p>\n\n    <p><i>Summary status</i></p>\n    <p>{{StatusSummary}}</p>\n\n  ",
+            templateUrl: 'app/dash/templates/page.html',
             providers: [dash_service_1.DashService, http_1.HTTP_PROVIDERS]
         }), 
-        __metadata('design:paramtypes', [dash_service_1.DashService])
+        __metadata('design:paramtypes', [dash_service_1.DashService, http_1.Http])
     ], DashComponent);
     return DashComponent;
 }());

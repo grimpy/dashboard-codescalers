@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Injectable }     from '@angular/core';
+import { Http }           from '@angular/http';
 import { Observable }     from 'rxjs/Observable';
+import { DashComponent }  from './dash.component';
 
 @Injectable()
 export class DashService {
@@ -17,6 +18,26 @@ export class DashService {
   getOverallStatus(callback) {
 
     let dashUrl = 'http://127.0.0.1:5000/getOverallStatus';
+    this.http.request(dashUrl)
+              .debounceTime(400)
+              .distinctUntilChanged()
+              .subscribe(callback);
+
+  }
+  getDetailedStatus(callback) {
+
+    let dashUrl = 'http://127.0.0.1:5000/getDetailedStatus';
+    
+    this.http.request(dashUrl)
+              .debounceTime(400)
+              .distinctUntilChanged()
+              .subscribe(callback);
+
+  }
+  getHealthRun(callback) {
+
+    let dashUrl = 'http://127.0.0.1:5000/getHealthRun';
+    
     this.http.request(dashUrl)
               .debounceTime(400)
               .distinctUntilChanged()

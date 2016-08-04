@@ -10,9 +10,7 @@ import { DashComponent }      from './dash/dash.component';
   template: `
     <my-dash></my-dash>
   `,
-/*
-  providers: [ HTTP_PROVIDERS ]
-*/
+
   directives: [
     DashComponent
   ]

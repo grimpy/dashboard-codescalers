@@ -28,6 +28,20 @@ var DashService = (function () {
             .distinctUntilChanged()
             .subscribe(callback);
     };
+    DashService.prototype.getDetailedStatus = function (callback) {
+        var dashUrl = 'http://127.0.0.1:5000/getDetailedStatus';
+        this.http.request(dashUrl)
+            .debounceTime(400)
+            .distinctUntilChanged()
+            .subscribe(callback);
+    };
+    DashService.prototype.getHealthRun = function (callback) {
+        var dashUrl = 'http://127.0.0.1:5000/getHealthRun';
+        this.http.request(dashUrl)
+            .debounceTime(400)
+            .distinctUntilChanged()
+            .subscribe(callback);
+    };
     DashService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [http_1.Http])
