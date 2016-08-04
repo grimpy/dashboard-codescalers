@@ -35,13 +35,7 @@
   <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-          aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+
         <a class="navbar-brand" href="#">envs Dashboard
           </a>
       </div>
@@ -58,8 +52,8 @@
     </div>
   </div>
   </div>
-  <!--this is an env unit -->
-  <div class="panel-group" >
+  <div class="panel-group">
+    <!--this is an env unit -->
     <div class="panel panel-default">
       <div class="panel-heading">
         <!--the env status -->
@@ -70,63 +64,108 @@
         </h4>
       </div>
       <!-- Machines of the env -->
+
       <div id="collapse1" class="panel-collapse collapse">
         <div class="panel-body">
+          <!--single machine data -->
           <div class="panel-heading">
-            <div id="ok" class="right small"></div>
+            <!-- machine status-->
+            <div id="ok" class="right "></div>
             <h4 class="panel-title ">
-              <a data-toggle="collapse" href="#collapsech" style = "display: inline;">Machine 1</a>
+              <a data-toggle="collapse" href="#collapsech" style="display: inline;outline: 0;">Machine Name : {{env.machine.name}} 
+                gid => {{machine.gid}}
+                nid => {{machine.nid}}
+                level => {{machine.level}}
+                 </a>
             </h4>
-            <div id="collapsech" class="panel-collapse collapse">
-              <li class="list-group-item">state 1
-                <div id="ok" class="right small" style = "display: inline;"></div>
-              </li>
-              <li class="list-group-item">state 2</li>
-            </div>
-          </div>
+            <!--Detailed status-->
+            <div class="panel-body">
 
-        </div>
-      </div>
-      <!--the env unit ends here !-->
+              <div id="collapsech" class="panel-collapse collapse ">
+                <!--node status-->
+                <div class="panel-heading">
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <div class="right" id="error"></div>
+                  <h4 class="panel-title ">
+                    <div id="ok" class="child_right "></div>
 
-          <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Collapsible Group 2</a>
-          </h4>
-        </div>
-        <div id="collapse2" class="panel-collapse collapse">
-          <div class="panel-body">
-            <div class="panel-heading">
-              <div id="error" class="right small"></div>
-              <h4 class="panel-title ">
-                <a data-toggle="collapse" href="#collapse22" style = "display: inline;">Machine 1</a>
-              </h4>
-              <div id="collapse22" class="panel-collapse collapse">
-                <li class="list-group-item">state 1
-                  <div id="error" class="right small" style = "display: inline;"></div>
-                </li>
-                <li class="list-group-item">state 2</li>
+                    <a data-toggle="collapse" href="#collapsend" style="display: inline; outline: 0;">{{cat in node.categories}} like OVS
+              </a>
+
+                  </h4>
+                  <div class="panel-body">
+
+                    <div id="collapsend" class="panel-collapse collapse">
+                      <!-- cat status-->
+
+                      <li class="list-group-item">
+                        <!-- cat data categories.cat.data-->
+                        <div id="ok" class="right "></div>
+                        {{cat.msg}} interval : {{cat.interval}} last : {{cat.last}}
+                      </li>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-          
+      </div>
+      <!--the env unit ends here !-->
+    </div>
+
+    <!-- the error env here !-->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="right" id="error"></div>
+
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">env 2</a>
+        </h4>
+      </div>
+      <div id="collapse2" class="panel-collapse collapse">
+        <div class="panel-body">
+          <div class="panel-heading">
+            <div id="error" class="right "></div>
+            <h4 class="panel-title ">
+              <a data-toggle="collapse" href="#collapse22" style="display: inline;">Machine Name</a>
+            </h4>
+            <div id="collapse22" class="panel-collapse collapse">
+              <li class="list-group-item">gid => {{machine.gid}}
+              </li>
+              <li class="list-group-item">nid => {{machine.nid}}
+              </li>
+              <li class="list-group-item">level => {{machine.level}}
+              </li>
+              <div class="panel-heading">
+                <h4 class="panel-title ">
+                  <a data-toggle="collapse" href="#collapsecat" style="display: inline; outline: 0;">
+                    <h5>Categories</h5>
+                  </a>
+                </h4>
+                <div id="collapsecat" class="panel-collapse collapse">
+
+                  <li class="list-group-item">OVS Module => {{machine.categories.ovs}}
+                  </li>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
 
+      </div>
 
-        <!-- Bootstrap core JavaScript
+      <!-- the error env ends here !-->
+      <!-- Bootstrap core JavaScript 
     ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-        <script src="../../dist/js/bootstrap.min.js"></script>
-        <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-        <script src="../../assets/js/vendor/holder.min.js"></script>
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-        <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+      <!-- Placed at the end of the document so the pages load faster -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+      <script src="../../dist/js/bootstrap.min.js"></script>
+      <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+      <script src="../../assets/js/vendor/holder.min.js"></script>
+      <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+      <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 </body>
 
 </html>

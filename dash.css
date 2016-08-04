@@ -75,14 +75,15 @@ body {
     position: absolute;
     right: 20px;
 }
+.child_right {
+  position: absolute;
+  right : 40px
+}
 .left {
     position: absolute;
     left: 20px;
 }
-.small {
-  width:5px;
-  height : 5px;
-}
+
 .main {
   padding: 20px;
   align-items: center;
