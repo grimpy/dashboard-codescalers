@@ -56,10 +56,12 @@
     <div class="panel panel-default" >
       <div class="panel-heading">
                                                                             <!--the env status -->
-         <div [ng-switch]="OverallStatus.state">                                                                   
+         <!--<div [ng-switch]="OverallStatus.state">                                                                   
           <div class="right" id="ok" *ng-switch-when='OK'></div>
           <div class="right" id="error" *ng-switch-when='ERROR'></div>
-         </div>
+         </div>-->
+      <div *ngIf="OverallStatus.state = OK" class="right" id="ok"></div>
+      <div *ngIf="OverallStatus.state = ERROR" class="right" id="error"></div>
 
         <h4 class="panel-title">
                                                                             <!--the env name item -->
@@ -73,7 +75,9 @@
                                                                             <!--single machine data -->
           <div class="panel-heading" *ngFor="let machine of StatusSummary">
                                                                            <!-- machine status-->
-            <div id="ok" class="right "></div>
+            <div *ngIf="machine.status = OK" id="ok" class="right "></div>
+            <div *ngIf="machine.status = ERROR" id="error" class="right "></div>
+
             <h4 class="panel-title " >
               <a data-toggle="collapse" href="#collapsech" style="display: inline;outline: 0;">Machine Name : {{machine.name}} 
                 gid => {{machine.gid}}
@@ -90,11 +94,13 @@
                 <div class="panel-heading" *ngFor="let cat of DetailedStatus.categories">
 
                   <h4 class="panel-title ">
-                  <div [ng-switch]="cat.status">                                                                   
+                  <!--<div [ng-switch]="cat.status">                                                                   
                     <div class="child_right" id="ok" *ng-switch-when='OK'></div>
                     <div class="child_right" id="error" *ng-switch-when='ERROR'></div>
-                  </div>
-                                                <!-- needs key to show and value to itrate -->
+                  </div>-->
+                        <div *ngIf="cat.status = OK" id="ok" class="right "></div>
+                        <div *ngIf="cat.status = ERROR" id="error" class="right "></div>
+                        <!-- needs key to show and value to itrate -->
                     <a data-toggle="collapse" href="#collapsend" style="display: inline; outline: 0;">{{cat}} like OVS
               </a>
 
@@ -106,10 +112,13 @@
 
                       <li class="list-group-item" *ngFor="let data_item of cat.data">
                                                                           <!-- cat data categories.cat.data-->
-                  <div [ng-switch]="data_item.status">                                                                   
+                  <!--<div [ng-switch]="data_item.status">                                                                   
                     <div class="child_right" id="ok" *ng-switch-when='OK'></div>
                     <div class="child_right" id="error" *ng-switch-when='ERROR'></div>
-                  </div>                        {{data_item.msg}} interval : {{data_item.interval}} last : {{data_item.last}}
+                  </div>                        -->
+                        <div *ngIf="data_item.status = OK" id="ok" class="right "></div>
+                        <div *ngIf="data_item.status = ERROR" id="error" class="right "></div>
+                  {{data_item.msg}} interval : {{data_item.interval}} last : {{data_item.last}}
                       </li>
                     </div>
                   </div>
