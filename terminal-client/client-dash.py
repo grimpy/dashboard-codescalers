@@ -18,7 +18,8 @@ def get_status_summary(env_name):
     url = base_url+"/getStatusSummary?environment=" + env_name
     req = requests.get(url).json()
     for i in req :
-        del i["categories"]
+        if ("categories"  in i):
+            del i["categories"]
     return req 
 
 
@@ -47,8 +48,8 @@ def get_service_details(env_name, nid, service_name):
 
 count = 0
 # for fancy colors 
-OKGREEN = '\033[92m'
-OKBLUE = '\033[94m'
+GREEN = '\033[92m'
+BLUE = '\033[94m'
 ENDC = '\033[0m'
 RED = '\033[91m'
 YELLOW = '\033[93m'
@@ -88,7 +89,7 @@ envs_list = map((lambda env : env['name']), envs)
 
 print help
 while(user_in != "exit") :
-    user_in = raw_input(OKGREEN + "["+str(count)+"] : " + ENDC)
+    user_in = raw_input(GREEN + "["+str(count)+"] : " + ENDC)
     user_in = user_in.split("/")
     user_in_len = len(user_in)
     if (user_in_len < 1):
@@ -107,9 +108,10 @@ while(user_in != "exit") :
                     res = get_machine_status(user_in[0], user_in[1])
                     print_all_data(res)
                except :
-                   out("wrong machine name !")
-               
-                
+                   machines_infos = get_status_summary(user_in[0])
+                   machines = map((lambda machine : machine['nid'] ),machines_infos )
+                   out("wrong machine id , the used machine ids are " + str(machines))
+
             elif(user_in_len == 3) : 
                 try:
                     res = get_service_details(user_in[0], user_in[1], user_in[2])
@@ -121,7 +123,9 @@ while(user_in != "exit") :
         out("Goodbye :D")
         break
     else : 
-        out("wrong input :( ")
+        out( RED  + """WRONG INPUT :
+    the only available environments are """ + str(envs_list))
+        
         continue
     count += 1
     print 
