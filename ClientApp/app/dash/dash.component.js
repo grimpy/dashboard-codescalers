@@ -113,7 +113,7 @@ var DashComponent = (function () {
     };
     __decorate([
         core_1.ViewChild('modal'), 
-        __metadata('design:type', ng2_bs3_modal_1.ModalComponent)
+        __metadata('design:type', (typeof (_a = typeof ng2_bs3_modal_1.ModalComponent !== 'undefined' && ng2_bs3_modal_1.ModalComponent) === 'function' && _a) || Object)
     ], DashComponent.prototype, "modal", void 0);
     DashComponent = __decorate([
         core_1.Component({
@@ -122,9 +122,10 @@ var DashComponent = (function () {
             providers: [dash_service_1.DashService, http_1.HTTP_PROVIDERS],
             directives: [ng2_bs3_modal_1.MODAL_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [dash_service_1.DashService, http_1.Http])
+        __metadata('design:paramtypes', [dash_service_1.DashService, (typeof (_b = typeof http_1.Http !== 'undefined' && http_1.Http) === 'function' && _b) || Object])
     ], DashComponent);
     return DashComponent;
+    var _a, _b;
 }());
 exports.DashComponent = DashComponent;
 //# sourceMappingURL=dash.component.js.map
