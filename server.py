@@ -1,7 +1,8 @@
-from flask import Flask, send_from_directory, render_template, request, jsonify, redirect
+from flask import Flask, send_from_directory, render_template, request, jsonify, redirect,url_for
 from environment import Environment
 import json, os
 from urllib.parse import urlparse, parse_qs, urlencode
+from urllib.request import urlopen
 import requests
 
 # from werkzeug.datastructures import Headers
@@ -26,16 +27,35 @@ import requests
 
 # usage
 
-def checkjwt(f):
-    def wrapper():
-        if request.args.get("jwt").isupper():
-            return f
-    return wrapper
+# https://itsyou.online/v1/oauth/authorize?client_id=dashboard&redirect_uri=localhost%2Fcallback&response_type=code&scope=user%3Aadmin&state=d9df3998-4fd1-4470-a836-3c9fa10dd98e
+# https://itsyou.online/v1/oauth/authorize?scope=user%3Aname&redirect_uri=localhost%2Fcallback&response_type=code&client_id=dashboard&state=ea356a69-5943-40b3-898a-21417f4e91cc
+# https://itsyou.online/v1/oauth/authorize?client_id=dashboard&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&response_type=code&scope=user%3Aname&state=cef0ee58-7e6e-404c-93f3-61b7e0d6e574#/authorize?client_id=dashboard&endpoint=%2Fv1%2Foauth%2Fauthorize&redirect_uri=scheme:%2F%2Flocalhost%2Fcallback&response_type=code&scope=user:name&state=cef0ee58-7e6e-404c-93f3-61b7e0d6e574
 
+
+# main infos here
+CLIENTID = "dashboard"
+REDIRECTURI = "http://0.0.0.0:5001/callback"
+CLIENTSECRET = "PTm6Qm2MWB6rsleyVHInrar7RF1madI_TxsCCoRdpNS9lLCChI-A"
+PUBLICKEY = '''
+    MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAES5X8XrfKdx9gYayFITc89wad4usrk0n2
+    7MjiGYvqalizeSWTHEpnd7oea9IQ8T5oJjMVH5cc0H5tFSKilFFeh//wngxIyny6
+    6+Vq5t5B0V0Ehy01+2ceEon2Y0XDkIKv
+    '''
+ALGORITHM = "ES384"
+
+#check jwt decorator 
+def check_jwt(fn):
+    def verify_jwt():
+        jwt = request.headers.get("Authentication").split(' ')[1]
+        try:
+            jws.verify(jwt, PUBLICKEY, algorithms=ALGORITHM)
+            return fn()
+        except : 
+            return False
+    return verify_jwt
 
 
 app = Flask(__name__, template_folder='ClientApp')
-
 
 # Exposing client app folder to flask
 BASE_URL = os.path.abspath(os.path.dirname(__file__))
@@ -49,16 +69,10 @@ def client_app_app_folder(filename):
 def client_app_folder(filename):
     return send_from_directory(CLIENT_APP_FOLDER, filename)
 
+#make Oauth stuff 
 @app.route('/connect-auth')
 def make_aouth():
-    CLIENTID = "dashboard"
-    REDIRECTURI = "localhost/callback"
-    CLIENTSECRET = "PTm6Qm2MWB6rsleyVHInrar7RF1madI_TxsCCoRdpNS9lLCChI-A"
-    PUBLICKEY = '''
-    MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAES5X8XrfKdx9gYayFITc89wad4usrk0n2
-    7MjiGYvqalizeSWTHEpnd7oea9IQ8T5oJjMVH5cc0H5tFSKilFFeh//wngxIyny6
-    6+Vq5t5B0V0Ehy01+2ceEon2Y0XDkIKv
-    '''
+    print("here Oauth")
     id = request.args.get('id')
     def login_to_idserver():
         from uuid import uuid4
@@ -67,15 +81,22 @@ def make_aouth():
             "response_type": "code",
             "client_id":CLIENTID,
             "redirect_uri":REDIRECTURI,
-            "scope": "read",
+            "scope": "user:name",
             "state" : STATE
         }
         base_url = "https://itsyou.online/v1/oauth/authorize?"
         url = base_url + urlencode(params)
         return url
 
-    def request_access_token():
 
+    login_url = login_to_idserver()
+    return  redirect(login_url)
+
+# make a jwt and return it 
+@app.route('/send_jwt')
+def get_jwt():
+    #get the access token
+    def get_access_token():
         params = {
         "grant_type": "client_credentials",
         "client_id" : CLIENTID,
@@ -87,17 +108,18 @@ def make_aouth():
         response = response.json()
         access_token = response['access_token']
         return access_token
-    login_url = login_to_idserver()
-    redirect(login_url)
+    access_token = get_access_token()
+    base_url = "https://itsyou.online/v1/oauth/jwt"
+    headers = {'Authorization': 'token %s' % access_token}
+    data = {'scope': 'user:memberOf:%s' % CLIENTID}
+    response = requests.post(base_url, data=json.dumps(data), headers=headers, verify=False)
+    return response.content
 
-    return  login_to_idserver()
-    # access_token = request_access_token()
-    # return "your id = {0} and your access_token = {1}".format(str(id), str(access_token))
 
 apis = None
 environments = {}
-def init():
 
+def init():
     global apis, environments
     with open('config.json') as json_data_file:
         data = json.load(json_data_file)
@@ -158,8 +180,16 @@ def get_all_machines_details():
 def main_page():
     return render_template("index.html")
 
+@app.route("/callback")
+def get_code():
+    print('here code')
+    code = request.args.get("code")
+    if code :
+        return redirect(url_for('get_jwt')) 
+    else :
+        return False
+    
 @app.route("/getDetailedStatus")
-@checkjwt
 def getDetailedStatus():
     environment = request.args.get('environment')
     nid = request.args.get('nid')
